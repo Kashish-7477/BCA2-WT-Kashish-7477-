@@ -38,6 +38,14 @@ By the end of this session, students will be able to:
 </form>
 ```
 
+> **Code Explanation:**
+> - `mb-3` — adds margin-bottom of 1rem below each form group (spacing between fields)
+> - `form-label` — styles the label text (proper font size and spacing above the input)
+> - `for="name"` on label + `id="name"` on input — **links the label to the input** so clicking the label focuses the input (important for accessibility)
+> - `form-control` — Bootstrap's main class for text inputs; adds consistent padding, border, and focus styling
+> - `placeholder` — gray hint text that disappears when user starts typing
+> - `textarea` with `rows="3"` — a multi-line input box, 3 rows tall
+
 ### Form Control Sizes
 
 ```html
@@ -45,6 +53,11 @@ By the end of this session, students will be able to:
 <input class="form-control" placeholder="Normal">
 <input class="form-control form-control-sm" placeholder="Small">
 ```
+
+> **Code Explanation:**
+> - `form-control-lg` — makes the input taller with larger text (useful for prominent fields like search boxes)
+> - `form-control` alone — standard/default size
+> - `form-control-sm` — compact input with smaller text (useful for filters or inline forms)
 
 ---
 
@@ -55,8 +68,8 @@ By the end of this session, students will be able to:
 ```html
 <form>
     <div class="row mb-3">
-        <label for="name" class="col-sm-3 col-form-label">Name</label>
-        <div class="col-sm-9">
+        <label for="name" class="col-sm-3 col-form-label">Name</label>  <!-- Label takes 25% width -->
+        <div class="col-sm-9">                                           <!-- Input takes 75% width -->
             <input type="text" class="form-control" id="name">
         </div>
     </div>
@@ -68,6 +81,13 @@ By the end of this session, students will be able to:
     </div>
 </form>
 ```
+
+> **Code Explanation:**
+> - `row` — uses Bootstrap's grid system to place label and input side by side
+> - `col-sm-3` on label — label takes 25% width on small screens and above
+> - `col-sm-9` on input wrapper — input takes 75% width (3+9=12)
+> - `col-form-label` — vertically aligns the label text with the input field
+> - On screens **below sm (576px)**, the label and input stack vertically (mobile-first behavior)
 
 ### Inline Form
 
@@ -85,7 +105,11 @@ By the end of this session, students will be able to:
 </form>
 ```
 
-### Floating Labels
+> **Code Explanation:**
+> - `row row-cols-lg-auto` — uses grid system to place form elements in a row on large screens
+> - `g-3 align-items-center` — gap between elements + vertically centers them
+> - `col-12` — on small screens, each form element takes full width (stacks vertically)
+> - On large screens (`lg+`), elements sit side by side in one row — perfect for newsletter signup bars
 
 ```html
 <div class="form-floating mb-3">
@@ -97,6 +121,12 @@ By the end of this session, students will be able to:
     <label for="floatPwd">Password</label>
 </div>
 ```
+
+> **Code Explanation:**
+> - `form-floating` — wraps the input and label together; the label **starts inside** the input field and **floats up** when the user clicks or types
+> - **Important**: The `<input>` must come **before** the `<label>` inside `form-floating` (reverse of normal order)
+> - `placeholder` is still required (Bootstrap uses it internally for the floating effect)
+> - Floating labels look modern and save vertical space — commonly seen on login forms
 
 ---
 
@@ -137,6 +167,14 @@ By the end of this session, students will be able to:
 </select>
 ```
 
+> **Code Explanation:**
+> - **Checkboxes** (`form-check` + `form-check-input`): Each checkbox gets proper spacing and alignment
+> - `checked` attribute — pre-selects a checkbox (HTML is checked by default)
+> - `for="html"` on label + `id="html"` on input — clicking the label text also toggles the checkbox
+> - **Toggle Switch** (`form-check form-switch`): Styled as a sliding on/off toggle — same as a checkbox but looks modern
+> - **Radio buttons**: Same structure as checkboxes but `type="radio"` + shared `name="gender"` ensures only one can be selected at a time
+> - **Select** (`form-select`): Bootstrap-styled dropdown; `selected disabled` on the first option creates a placeholder that can't be selected after choosing another option
+
 ---
 
 ## 4. Bootstrap Validation
@@ -174,6 +212,115 @@ By the end of this session, students will be able to:
 })();
 </script>
 ```
+
+> **Code Explanation:**
+> - `needs-validation` — a custom class that Bootstrap's JS uses to identify forms for validation
+> - `novalidate` — disables the browser's default validation popups so Bootstrap's styled validation messages appear instead
+> - `required` — HTML5 attribute that makes the field mandatory
+> - `valid-feedback` — green message shown when the input passes validation
+> - `invalid-feedback` — red message shown when the input fails validation
+> - The JavaScript at the bottom:
+>   - Selects all forms with `needs-validation` class
+>   - Adds a `submit` event listener to each form
+>   - `checkValidity()` — built-in browser method that checks all required fields
+>   - If invalid: `preventDefault()` stops the form from submitting; `stopPropagation()` prevents the event from bubbling up
+>   - `was-validated` class is added to the form, which triggers Bootstrap to show the feedback messages
+
+### Form Accessibility — Labels, ARIA, and Best Practices
+
+Accessibility ensures that **all users**, including those using screen readers or keyboard navigation, can use your forms:
+
+```html
+<!-- GOOD: Label properly linked to input via for/id -->
+<div class="mb-3">
+    <label for="studentName" class="form-label">Student Name</label>
+    <input type="text" class="form-control" id="studentName" 
+           aria-describedby="nameHelp" required>
+    <div id="nameHelp" class="form-text">Enter your full name as per university records.</div>
+</div>
+
+<!-- GOOD: Hidden label for search boxes (visually hidden but screen reader readable) -->
+<label for="searchBox" class="visually-hidden">Search courses</label>
+<input type="search" class="form-control" id="searchBox" placeholder="Search courses...">
+
+<!-- GOOD: ARIA attributes for custom validation messages -->
+<input type="email" class="form-control" id="stuEmail" required
+       aria-required="true" aria-invalid="false">
+```
+
+> **Code Explanation:**
+> - `for="studentName"` + `id="studentName"` — **always link labels to inputs** — this is the most important accessibility rule for forms
+> - `aria-describedby="nameHelp"` — links the input to help text; screen readers read the help text when the input is focused
+> - `form-text` — Bootstrap's class for help text below an input (gray, small text)
+> - `visually-hidden` — Bootstrap class that hides the label **visually** but keeps it readable for screen readers (use this when a placeholder serves as the visible label)
+> - `aria-required="true"` — explicitly tells screen readers the field is required
+> - `aria-invalid="false"` — tells screen readers whether the current value is invalid (update this with JavaScript during validation)
+
+### Input Groups — Prepend/Append Icons or Text
+
+Input groups let you attach text, icons, or buttons to the beginning or end of an input field:
+
+```html
+<!-- Rupee symbol before price input -->
+<div class="input-group mb-3">
+    <span class="input-group-text">₹</span>         <!-- Prepended text -->
+    <input type="number" class="form-control" placeholder="Course fee" aria-label="Amount in rupees">
+</div>
+
+<!-- Email input with @ domain appended -->
+<div class="input-group mb-3">
+    <input type="text" class="form-control" placeholder="username">
+    <span class="input-group-text">@mfrims.ac.in</span>  <!-- Appended text -->
+</div>
+
+<!-- Phone number with country code -->
+<div class="input-group mb-3">
+    <span class="input-group-text">+91</span>        <!-- Indian country code -->
+    <input type="tel" class="form-control" placeholder="9876543210" pattern="\d{10}">
+</div>
+
+<!-- Search input with button -->
+<div class="input-group mb-3">
+    <input type="search" class="form-control" placeholder="Search students...">
+    <button class="btn btn-primary" type="button">🔍 Search</button>  <!-- Appended button -->
+</div>
+```
+
+> **Code Explanation:**
+> - `input-group` — wraps the input and its addons together as a single visual unit
+> - `input-group-text` — styled container for text/icons that attach to the input (gray background by default)
+> - The ₹ symbol is prepended (appears before the input) — useful for currency fields
+> - `@mfrims.ac.in` is appended (appears after the input) — useful for email domain auto-fill
+> - Buttons can also be appended/prepended using `btn` class inside the input group
+> - `aria-label` — provides an accessible name when there's no visible label
+
+### Form State Management — Disabled and Readonly Fields
+
+```html
+<!-- Disabled input: grayed out, cannot be clicked or edited, NOT submitted with form -->
+<div class="mb-3">
+    <label for="rollNo" class="form-label">Roll Number</label>
+    <input type="text" class="form-control" id="rollNo" value="25BCA042" disabled>
+</div>
+
+<!-- Readonly input: visible and submitted, but user cannot edit it -->
+<div class="mb-3">
+    <label for="semester" class="form-label">Semester</label>
+    <input type="text" class="form-control" id="semester" value="II" readonly>
+</div>
+
+<!-- Readonly plain text: looks like normal text, no input border -->
+<div class="mb-3">
+    <label for="university" class="form-label">University</label>
+    <input type="text" class="form-control-plaintext" id="university" 
+           value="Mandsaur University" readonly>
+</div>
+```
+
+> **Code Explanation:**
+> - `disabled` — makes the field grayed out and **unclickable**; the value is **NOT sent** when the form is submitted (use for fields that don't apply)
+> - `readonly` — the field looks normal and its value **IS sent** on submit, but the user cannot change it (use for auto-filled data like roll number)
+> - `form-control-plaintext` — removes the input border/background so it looks like regular text, but is still a form field (useful for displaying data in a form context)
 
 ---
 
@@ -390,9 +537,30 @@ By the end of this session, students will be able to:
 </html>
 ```
 
----
+> **Code Explanation:**
+> - **Two-column layout**: `col-lg-6` places the registration and contact forms side by side on large screens; they stack on mobile
+> - **Registration Form**:
+>   - `form-floating` — floating labels that animate upward when the user clicks/types
+>   - `required minlength="2"` — name must have at least 2 characters
+>   - `pattern="\d{10}"` — phone number must be exactly 10 digits (Indian mobile number format)
+>   - `minlength="8"` — password requires at least 8 characters
+>   - `form-check-inline` — places radio buttons side by side (Male, Female, Other) instead of stacking
+>   - `form-select` with `required` — dropdown for course selection; first option is `disabled` so user must pick one
+>   - `form-check form-switch` for newsletter — toggle switch style
+>   - `btn-primary w-100 btn-lg` — full-width large blue button
+> - **Contact Form**:
+>   - `row` with `col-md-6` — places first name and last name side by side on tablets+
+>   - `mt-3 mt-md-0` — adds top margin on mobile (since fields stack) but removes it on tablets (where they're side by side)
+>   - `style="height: 120px"` on textarea — sets a fixed height for the message area
+>   - `form-check form-switch` — "Send me a copy" toggle
+> - **JavaScript validation**:
+>   - Selects all `needs-validation` forms and adds submit event listeners
+>   - `checkValidity()` — browser checks all constraints (required, minlength, pattern, etc.)
+>   - If valid: shows alert and resets the form; `classList.remove('was-validated')` clears validation styling
+>   - If invalid: adds `was-validated` class, which triggers Bootstrap to show red borders and error messages
+>   - `event.preventDefault()` — prevents the form from actually submitting to a server (since we don't have a backend)
 
-## Summary
+---
 
 | Component | Key Classes |
 |-----------|------------|

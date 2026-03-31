@@ -71,6 +71,23 @@ By the end of this session, students will be able to:
 </nav>
 ```
 
+> **Code Explanation:**
+> - `navbar` — creates the navigation bar component
+> - `navbar-expand-lg` — the navbar is **collapsed** (hamburger menu) on screens below `lg` (992px) and **expanded** (horizontal links) on `lg` and above
+> - `navbar-dark bg-dark` — white text on dark background (use `navbar-light bg-light` for the reverse)
+> - `navbar-brand` — the site name/logo on the far left; always visible even when collapsed
+> - `navbar-toggler` — the hamburger button (☰) that appears on mobile; `data-bs-target="#mainNav"` links it to the collapsible section
+> - `navbar-toggler-icon` — Bootstrap's built-in hamburger icon (three horizontal lines)
+> - `collapse navbar-collapse` — the section that collapses on mobile and expands on desktop
+> - `navbar-nav me-auto` — navigation links aligned to the left; `me-auto` pushes everything after it to the right
+> - `nav-link active` — `active` class highlights the current page link (styled differently from other links)
+> - `dropdown-toggle` + `data-bs-toggle="dropdown"` — creates a dropdown menu on click
+> - `dropdown-menu` + `dropdown-item` — the dropdown list and its items
+> - `dropdown-divider` — a thin horizontal line separating dropdown items
+> - `d-flex` on the form — makes the search input and button sit side by side
+> - `form-control me-2` — styled input with margin-end (gap between input and button)
+> - `btn btn-outline-light` — a transparent button with white border (matches the dark navbar)
+
 ### Navbar Color Schemes
 
 | Classes | Appearance |
@@ -79,6 +96,91 @@ By the end of this session, students will be able to:
 | `navbar-dark bg-primary` | White text on blue background |
 | `navbar-light bg-light` | Dark text on light background |
 | `bg-transparent` | Transparent background |
+
+### Fixed vs Sticky Navbar Positioning
+
+| Feature | `fixed-top` | `sticky-top` |
+|---------|------------|-------------|
+| **Behavior** | Always stays at the top of the viewport | Sticks to top only when you scroll past it |
+| **Overlap** | Overlaps page content (need `margin-top` on body) | Does NOT overlap — takes its normal space first |
+| **Best for** | Navbars that should always be visible (e-commerce, dashboards) | Navbars that appear after a hero section |
+| **Usage** | `<nav class="navbar fixed-top">` | `<nav class="navbar sticky-top">` |
+| **Body fix** | Need `body { margin-top: 56px; }` | No fix needed |
+
+```html
+<!-- Fixed navbar: always visible, overlaps content -->
+<nav class="navbar navbar-dark bg-dark fixed-top">
+    <!-- Need to add margin-top to body to prevent content from hiding behind navbar -->
+    ...
+</nav>
+<div style="margin-top: 56px;">Page content starts here</div>
+
+<!-- Sticky navbar: stays in normal flow, sticks on scroll -->
+<nav class="navbar navbar-dark bg-dark sticky-top">
+    <!-- No margin fix needed — navbar takes its normal space -->
+    ...
+</nav>
+```
+
+> **Code Explanation:**
+> - `fixed-top` — removes the navbar from normal document flow and **pins it** to the top of the screen at all times. Content will slide behind it, so you need to add `margin-top` (usually 56px for default navbar height)
+> - `sticky-top` — the navbar stays in its normal position initially, but when the user scrolls past it, it **sticks** to the top of the viewport. No margin fix is needed because it doesn't overlap content
+
+### Marking the Active (Current) Page
+
+To indicate which page the user is currently on, add the `active` class and `aria-current="page"` attribute:
+
+```html
+<ul class="navbar-nav">
+    <!-- "About" is the current page -->
+    <li class="nav-item">
+        <a class="nav-link" href="index.html">Home</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link active" aria-current="page" href="about.html">About</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="contact.html">Contact</a>
+    </li>
+</ul>
+```
+
+> **Code Explanation:**
+> - `active` class — makes the link visually stand out (brighter/bolder text) so users know which page they're on
+> - `aria-current="page"` — an accessibility attribute that tells screen readers "this is the current page" (important for visually impaired users)
+> - When you create a multi-page website, move the `active` class to the correct link on each page
+
+### Search Form in Navbar — Placement Options
+
+The search form can be placed in different positions within the navbar:
+
+```html
+<!-- Search form aligned to the right (most common) -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+        <a class="navbar-brand" href="#">Sharma Books</a>
+        <div class="collapse navbar-collapse" id="navContent">
+            <ul class="navbar-nav me-auto">  <!-- me-auto pushes search to the right -->
+                <li class="nav-item"><a class="nav-link" href="#">Books</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">Authors</a></li>
+            </ul>
+            <!-- Search form on the right side of navbar -->
+            <form class="d-flex" role="search">
+                <input class="form-control me-2" type="search" 
+                       placeholder="Search books..." aria-label="Search">
+                <button class="btn btn-outline-light" type="submit">🔍</button>
+            </form>
+        </div>
+    </div>
+</nav>
+```
+
+> **Code Explanation:**
+> - `me-auto` on `navbar-nav` pushes all content after it (the search form) to the **right side**
+> - `role="search"` — tells screen readers this is a search form (accessibility)
+> - `aria-label="Search"` — provides a label for the input since there's no visible `<label>` element
+> - `d-flex` — makes the input and button sit side by side
+> - On mobile, the search form appears inside the hamburger menu below the navigation links
 
 ---
 
@@ -111,18 +213,30 @@ By the end of this session, students will be able to:
 </div>
 ```
 
-### Pills (Rounded Tab Style)
+> **Code Explanation:**
+> - `nav nav-tabs` — creates a tab-style navigation bar with underlined active tab
+> - `data-bs-toggle="tab"` — tells Bootstrap JS to switch tab content when clicked
+> - `data-bs-target="#html"` — links this tab button to the content pane with `id="html"`
+> - `active` on the button — marks the default active tab
+> - `tab-content` — wrapper for all tab panels
+> - `tab-pane fade show active` — `fade` adds a fade animation, `show` makes it visible, `active` marks it as the initially displayed panel
+> - Tab panels without `show active` are hidden by default and appear when their tab is clicked
 
 ```html
 <ul class="nav nav-pills">
     <li class="nav-item">
-        <a class="nav-link active" href="#">Active</a>
+        <a class="nav-link active" href="#">Active</a>   <!-- Filled/highlighted pill -->
     </li>
     <li class="nav-item">
-        <a class="nav-link" href="#">Link</a>
+        <a class="nav-link" href="#">Link</a>             <!-- Regular pill -->
     </li>
 </ul>
 ```
+
+> **Code Explanation:**
+> - `nav-pills` — styles the navigation as rounded pill-shaped buttons instead of underlined tabs
+> - `active` — fills the pill with the primary color (blue by default)
+> - Pills are often used for category filters (e.g., "All | Web | App | AI")
 
 ---
 
@@ -135,10 +249,17 @@ By the end of this session, students will be able to:
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="#">Home</a></li>
         <li class="breadcrumb-item"><a href="#">Courses</a></li>
-        <li class="breadcrumb-item active">Web Technology</li>
+        <li class="breadcrumb-item active">Web Technology</li>  <!-- Current page (no link) -->
     </ol>
 </nav>
 ```
+
+> **Code Explanation:**
+> - `aria-label="breadcrumb"` — tells screen readers this is a breadcrumb navigation (accessibility)
+> - `breadcrumb` — styles the list horizontally with `/` separators between items
+> - `breadcrumb-item` — each step in the path; linked items let users navigate back
+> - `active` on the last item — indicates the current page (displayed as plain text, not a link)
+> - Breadcrumbs show the user their current location in the site hierarchy (e.g., Home → Courses → Web Technology)
 
 ### Pagination
 
@@ -153,6 +274,14 @@ By the end of this session, students will be able to:
     </ul>
 </nav>
 ```
+
+> **Code Explanation:**
+> - `pagination` — styles the list as a horizontal set of page buttons
+> - `justify-content-center` — centers the pagination horizontally on the page
+> - `page-item` — wrapper for each page link
+> - `page-link` — the clickable link inside each page item
+> - `disabled` — grays out the "Previous" button (user is on page 1, can't go back)
+> - `active` — highlights page 1 as the current page (filled blue background)
 
 ---
 
@@ -297,9 +426,22 @@ By the end of this session, students will be able to:
 </html>
 ```
 
----
+> **Code Explanation:**
+> - **Navbar**: `navbar-dark bg-primary sticky-top` — a blue navbar that sticks to the top when scrolling
+> - **`sticky-top`**: The navbar stays visible as users scroll down — important for easy navigation
+> - **Brand**: `navbar-brand fw-bold` with 🎓 emoji — always visible, even on mobile
+> - **Two dropdowns**: "Departments" and "BCA Courses" — each with `dropdown-toggle` + `dropdown-menu`
+> - **`dropdown-divider`**: A thin line separating "View All" from department links
+> - **Search form**: `d-flex` makes input and button sit side by side; placed after `me-auto` so it appears on the right
+> - **Breadcrumb**: Shows the navigation path: Home → BCA → Semester II → Web Technology
+> - **Tabs (`nav-tabs`)**: Five tabs for five units; each linked to a `tab-pane` using `data-bs-target`
+> - **Tab content**: Each `tab-pane` has a heading, description, and badges for day count and type
+> - **`border border-top-0 rounded-bottom`**: Creates a box around tab content that visually connects to the active tab (no top border since the tab itself provides it)
+> - **Badges**: `badge bg-primary` and `badge bg-info` — small colored labels showing "5 Days" and "Theory + Lab"
+> - **Pagination**: Centered page navigation with Previous (disabled), numbered pages, and Next
+> - **Footer**: `bg-dark text-white text-center py-3` — dark footer with centered copyright text
 
-## Summary
+---
 
 | Component | Key Classes |
 |-----------|------------|

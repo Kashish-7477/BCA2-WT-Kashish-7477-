@@ -67,6 +67,46 @@ By the end of this session, students will be able to:
 </div>
 ```
 
+> **Code Explanation:**
+> - `carousel slide` — creates the carousel container; `slide` adds the sliding animation
+> - `data-bs-ride="carousel"` — auto-starts the slideshow when the page loads
+> - **Indicators**: Small clickable dots at the bottom; `data-bs-slide-to="0"` links each dot to a specific slide (zero-indexed)
+> - `class="active"` on the first indicator — marks it as the current slide
+> - **Slides** (`carousel-inner` + `carousel-item`): Each `carousel-item` holds one slide; the first must have `active`
+> - `d-block w-100` on images — ensures images display as block elements at full width
+> - **Captions** (`carousel-caption`): Text overlay on each slide
+> - `d-none d-md-block` on the third caption — **hides the caption on mobile** phones (saves space on small screens)
+> - **Controls**: `carousel-control-prev` and `carousel-control-next` — left/right arrows; `data-bs-slide="prev"/"next"` tells Bootstrap which direction to move
+
+### Keyboard Navigation for Carousel
+
+Bootstrap carousels support **keyboard navigation** automatically:
+
+| Key | Action |
+|-----|--------|
+| `←` Left Arrow | Go to previous slide |
+| `→` Right Arrow | Go to next slide |
+
+> **Note:** Keyboard navigation only works when the carousel has focus. Users can focus the carousel by clicking on it or tabbing to it. This is important for **accessibility** — users who can't use a mouse can still navigate slides with arrow keys.
+
+To pause auto-play when the user hovers (giving them time to read):
+
+```html
+<!-- Carousel that pauses on hover and supports keyboard -->
+<div id="myCarousel" class="carousel slide" 
+     data-bs-ride="carousel" 
+     data-bs-pause="hover"
+     data-bs-keyboard="true">
+    <!-- data-bs-pause="hover" — pauses auto-rotation when mouse hovers over the carousel -->
+    <!-- data-bs-keyboard="true" — enables arrow key navigation (true by default) -->
+    ...
+</div>
+```
+
+> **Code Explanation:**
+> - `data-bs-pause="hover"` — pauses the auto-sliding when the user's mouse is over the carousel (default behavior, but good to know)
+> - `data-bs-keyboard="true"` — explicitly enables keyboard arrow key navigation (this is `true` by default in Bootstrap 5)
+
 ### Carousel Options
 
 | Attribute | Value | Purpose |
@@ -115,6 +155,53 @@ By the end of this session, students will be able to:
 </div>
 ```
 
+> **Code Explanation:**
+> - **Trigger Button**: `data-bs-toggle="modal"` + `data-bs-target="#myModal"` — clicking this button opens the modal with `id="myModal"`
+> - `modal fade` — `fade` adds a smooth fade-in animation when the modal opens
+> - `tabindex="-1"` — prevents the modal from being focused by tabbing when it's closed
+> - `modal-dialog` — centers the modal and controls its width
+> - `modal-content` — the visible modal box (white background with rounded corners)
+> - `modal-header` — contains the title and close button
+> - `btn-close` + `data-bs-dismiss="modal"` — the × button that closes the modal
+> - `modal-body` — the main content area (forms, text, images, etc.)
+> - `modal-footer` — bottom section for action buttons (Cancel/Save/Login)
+
+### Modal Focus Management — Accessibility
+
+When a modal opens, Bootstrap automatically:
+1. **Traps focus inside the modal** — pressing Tab cycles through only the modal's elements (not the page behind)
+2. **Returns focus** to the trigger button when the modal closes
+3. **Adds `aria-modal="true"`** — tells screen readers a modal is open
+
+```html
+<!-- Modal with proper accessibility attributes (Bootstrap adds most of these automatically) -->
+<div class="modal fade" id="accessibleModal" tabindex="-1" 
+     aria-labelledby="modalTitle" aria-hidden="true">
+    <!-- aria-labelledby links to the modal's heading for screen readers -->
+    <!-- aria-hidden="true" tells screen readers to ignore this when closed -->
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitle">Enrollment Form</h5>
+                <!-- id="modalTitle" is referenced by aria-labelledby above -->
+                <button type="button" class="btn-close" data-bs-dismiss="modal" 
+                        aria-label="Close"></button>
+                <!-- aria-label="Close" tells screen readers what this button does -->
+            </div>
+            <div class="modal-body">
+                <p>Fill in your enrollment details below.</p>
+            </div>
+        </div>
+    </div>
+</div>
+```
+
+> **Code Explanation:**
+> - `aria-labelledby="modalTitle"` — screen readers announce the modal's title when it opens (links to the `id` of the heading)
+> - `aria-hidden="true"` — tells assistive technology to ignore the modal when it's closed; Bootstrap automatically changes this to `false` when the modal opens
+> - `aria-label="Close"` on the close button — since the button only shows ×, screen readers need this label to know its purpose
+> - **Focus trapping** happens automatically — you don't need to write any extra code
+
 ### Modal Sizes
 
 ```html
@@ -124,6 +211,13 @@ By the end of this session, students will be able to:
 <div class="modal-dialog modal-xl">...</div>    <!-- Extra Large -->
 <div class="modal-dialog modal-fullscreen">...</div> <!-- Fullscreen -->
 ```
+
+> **Code Explanation:**
+> - `modal-sm` — small modal (~300px wide), used for simple confirmations ("Are you sure?")
+> - Default (no size class) — medium modal (~500px wide), good for login forms and short content
+> - `modal-lg` — large modal (~800px wide), good for detailed content like course information
+> - `modal-xl` — extra large modal (~1140px wide), good for data tables or image previews
+> - `modal-fullscreen` — takes up the entire screen, useful for mobile-first interfaces
 
 ---
 
@@ -163,9 +257,46 @@ By the end of this session, students will be able to:
 </div>
 ```
 
----
+> **Code Explanation:**
+> - `accordion` — the parent container; the `id` is referenced by `data-bs-parent` to create the "only one open at a time" behavior
+> - `accordion-item` — each collapsible section (question + answer)
+> - `accordion-header` + `accordion-button` — the clickable header; `data-bs-toggle="collapse"` tells Bootstrap to show/hide the linked content
+> - `data-bs-target="#faq1"` — links the button to the content with `id="faq1"`
+> - `collapse show` — the first item starts open (`show` makes it visible by default)
+> - `collapsed` class on the second button — indicates this section is closed (rotates the arrow icon)
+> - `data-bs-parent="#faqAccordion"` — **important!** This ensures only one item is open at a time. Without it, multiple items can be open simultaneously
+> - `accordion-body` — the content area that slides open/closed
 
-## 4. Tooltips & Toasts
+### Accordion Accessibility — ARIA Roles
+
+Bootstrap's accordion **automatically adds accessibility attributes** when initialized:
+
+| Attribute | Added To | Purpose |
+|-----------|----------|---------|
+| `aria-expanded="true/false"` | Accordion button | Tells screen readers if the section is open or closed |
+| `aria-controls="faq1"` | Accordion button | Links button to the content it controls |
+| `role="region"` | Accordion collapse | Marks the content as a distinct page region |
+| `aria-labelledby="..."` | Accordion collapse | Links content to its header for screen readers |
+
+> **What this means for students:** You don't need to manually add these ARIA attributes — Bootstrap's JavaScript adds them when the page loads. But understanding them helps you know why Bootstrap components work well with screen readers.
+
+```html
+<!-- What Bootstrap renders after initialization (you write the left, Bootstrap adds the right) -->
+<button class="accordion-button" 
+        data-bs-toggle="collapse" 
+        data-bs-target="#faq1"
+        aria-expanded="true"       
+        aria-controls="faq1">      
+    <!-- aria-expanded="true" — screen reader announces "expanded" -->
+    <!-- aria-controls="faq1" — screen reader knows this button controls the #faq1 panel -->
+    What is Bootstrap?
+</button>
+```
+
+> **Code Explanation:**
+> - `aria-expanded="true"` — Bootstrap adds this automatically; it changes to `"false"` when the section is collapsed
+> - `aria-controls="faq1"` — tells assistive technology which panel this button toggles
+> - Screen readers will announce: "What is Bootstrap?, expanded, button" — helping blind users understand the interface
 
 ### Tooltips
 
@@ -180,6 +311,13 @@ const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]
 const tooltipList = [...tooltipTriggerList].map(el => new bootstrap.Tooltip(el));
 </script>
 ```
+
+> **Code Explanation:**
+> - `data-bs-toggle="tooltip"` — marks this element as having a tooltip
+> - `title="Hello from tooltip!"` — the text that appears in the tooltip popup
+> - **Tooltips must be initialized with JavaScript** — they don't work automatically like dropdowns or modals
+> - `querySelectorAll('[data-bs-toggle="tooltip"]')` — finds all tooltip elements on the page
+> - `new bootstrap.Tooltip(el)` — creates a tooltip instance for each element
 
 ### Toasts (Notification popups)
 
@@ -200,6 +338,16 @@ const toast = new bootstrap.Toast(document.getElementById('myToast'));
 toast.show();
 </script>
 ```
+
+> **Code Explanation:**
+> - `toast-container position-fixed top-0 end-0 p-3` — positions the toast container in the **top-right corner** of the screen
+> - `position-fixed` — stays in place even when the page scrolls
+> - `toast` — the notification popup component; hidden by default
+> - `toast-header` — colored header with title, timestamp, and close button
+> - `btn-close-white` — white close button (for dark header backgrounds)
+> - `toast-body` — the notification message text
+> - `new bootstrap.Toast(element)` — creates a toast instance
+> - `toast.show()` — programmatically displays the toast (it auto-hides after 5 seconds by default)
 
 ---
 
@@ -472,9 +620,22 @@ toast.show();
 </html>
 ```
 
----
+> **Code Explanation:**
+> - **Navbar**: `navbar-dark bg-dark` with a Login button (`data-bs-toggle="modal"`) — opens the login modal on click
+> - **Hero Carousel**: `carousel-fade` adds a fade transition instead of the default slide; `data-bs-interval="4000"` auto-advances every 4 seconds
+> - Each slide uses a colored background (`bg-primary`, `bg-success`, `bg-info`) with centered text — no actual images needed
+> - `style="padding: 120px 0;"` creates tall hero sections
+> - **FAQ Accordion**: `data-bs-parent="#faqAccordion"` ensures only one question is open at a time
+> - First accordion item has `collapse show` (starts open); others have `collapsed` on the button (starts closed)
+> - **Course Cards**: Three cards with emoji icons, each has a "Details" button that opens a different modal (`data-bs-target="#courseModal1"`, etc.)
+> - `shadow-sm` adds a subtle shadow; `h-100` makes all cards equal height
+> - **Login Modal**: `form-floating` inputs for email and password; `btn-close-white` for close button on dark header
+> - `form-check` with "Remember me" checkbox
+> - **Course Detail Modals**: `modal-lg` for wider modals; each has a different colored header matching the card's button color
+> - The Web Technology modal includes a topic list and exam details
+> - **Footer**: Simple dark footer with copyright
 
-## Summary
+---
 
 | Component | Key Classes/Attributes |
 |-----------|----------------------|
